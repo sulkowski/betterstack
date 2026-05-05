@@ -68,11 +68,11 @@
 	</tr>
 </template>
 
-<template id="users-empty-first-template">
+<template id="users-no-users-template">
 	<?php include __DIR__.'/partials/no-users.php'; ?>
 </template>
 
-<template id="users-empty-search-template">
+<template id="users-no-search-results-template">
 	<?php include __DIR__.'/partials/no-results.php'; ?>
 </template>
 

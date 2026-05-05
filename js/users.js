@@ -5,28 +5,41 @@
 	const form = dialog.querySelector('#create-user-form');
 	if (!form) return;
 
-	const submitButton = dialog.querySelector('button[form="create-user-form"]');
-	const searchForm = document.querySelector('#user-search-form');
-	const searchInput = document.querySelector('#user-search-input');
-	const formError = form.querySelector('#create-user-form-error');
-	const usersEmptyState = document.querySelector('#users-empty-state');
-	const usersTableBlock = document.querySelector('#users-table-block');
-	const usersTableBody = document.querySelector('#users-table-body');
-	const userRowTemplate = document.querySelector('#user-row-template');
-	const usersEmptyFirstTemplate = document.querySelector('#users-empty-first-template');
-	const usersEmptySearchTemplate = document.querySelector('#users-empty-search-template');
-	const totalUsersCount = document.querySelector('#total-users-count');
-	const usersLoadingStatus = document.querySelector('#users-loading-status');
+	const elements = {
+		search: {
+			form: document.querySelector('#user-search-form'),
+			input: document.querySelector('#user-search-input'),
+		},
+		userForm: {
+			dialog,
+			form,
+			submitButton: dialog.querySelector('button[form="create-user-form"]'),
+			formError: form.querySelector('#create-user-form-error'),
+		},
+		userList: {
+			emptyState: document.querySelector('#users-empty-state'),
+			tableBlock: document.querySelector('#users-table-block'),
+			tableBody: document.querySelector('#users-table-body'),
+			totalCount: document.querySelector('#total-users-count'),
+			loadingStatus: document.querySelector('#users-loading-status'),
+		},
+		templates: {
+			row: document.querySelector('#user-row-template'),
+			noUsers: document.querySelector('#users-no-users-template'),
+			noSearchResults: document.querySelector('#users-no-search-results-template'),
+		},
+	};
+
 	const validationErrors = {};
 
-	form.querySelectorAll('[data-error-for]').forEach((element) => {
+	elements.userForm.form.querySelectorAll('[data-error-for]').forEach((element) => {
 		validationErrors[element.getAttribute('data-error-for')] = element;
 	});
 
 	const clearErrors = () => {
-		if (formError) {
-			formError.classList.add('hidden');
-			formError.textContent = '';
+		if (elements.userForm.formError) {
+			elements.userForm.formError.classList.add('hidden');
+			elements.userForm.formError.textContent = '';
 		}
 
 		Object.values(validationErrors).forEach((element) => {
@@ -35,7 +48,7 @@
 		});
 
 		['name', 'email', 'city'].forEach((fieldName) => {
-			const field = form.elements[fieldName];
+			const field = elements.userForm.form.elements[fieldName];
 			if (!field) return;
 			field.classList.remove('ring-red-300', 'focus:ring-red-500');
 			field.classList.add('ring-slate-300', 'focus:ring-indigo-500');
@@ -44,14 +57,14 @@
 	};
 
 	const showGlobalError = (message) => {
-		if (!formError) return;
-		formError.textContent = message;
-		formError.classList.remove('hidden');
+		if (!elements.userForm.formError) return;
+		elements.userForm.formError.textContent = message;
+		elements.userForm.formError.classList.remove('hidden');
 	};
 
 	const setFieldError = (fieldName, message) => {
 		const fieldError = validationErrors[fieldName];
-		const field = form.elements[fieldName];
+		const field = elements.userForm.form.elements[fieldName];
 		if (fieldError) {
 			fieldError.textContent = message;
 			fieldError.classList.remove('hidden');
@@ -64,16 +77,16 @@
 	};
 
 	const setSubmitting = (isSubmitting) => {
-		if (submitButton) {
-			submitButton.disabled = isSubmitting;
-			submitButton.classList.toggle('opacity-70', isSubmitting);
-			submitButton.classList.toggle('cursor-not-allowed', isSubmitting);
-			submitButton.textContent = isSubmitting ? 'Creating...' : 'Create User';
+		if (elements.userForm.submitButton) {
+			elements.userForm.submitButton.disabled = isSubmitting;
+			elements.userForm.submitButton.classList.toggle('opacity-70', isSubmitting);
+			elements.userForm.submitButton.classList.toggle('cursor-not-allowed', isSubmitting);
+			elements.userForm.submitButton.textContent = isSubmitting ? 'Creating...' : 'Create User';
 		}
 	};
 
 	const appendUser = (user) => {
-		const rowFragment = userRowTemplate.content.cloneNode(true);
+		const rowFragment = elements.templates.row.content.cloneNode(true);
 		const rowElement = rowFragment.querySelector('tr');
 
 		const nameCell = rowElement.querySelector('[data-field="name"]');
@@ -84,53 +97,53 @@
 		emailCell.textContent = user.email || '';
 		cityCell.textContent = user.city || '';
 
-		usersTableBody.appendChild(rowFragment);
+		elements.userList.tableBody.appendChild(rowFragment);
 	};
 
 	const renderEmptyState = (totalUsersForEmpty) => {
-		if (!usersEmptyState) return;
-		const nameFilter = searchInput ? searchInput.value.trim() : '';
+		if (!elements.userList.emptyState) return;
+		const nameFilter = elements.search.input ? elements.search.input.value.trim() : '';
 		const useSearchVariant = nameFilter !== '' && totalUsersForEmpty > 0;
-		const template = useSearchVariant ? usersEmptySearchTemplate : usersEmptyFirstTemplate;
-		usersEmptyState.innerHTML = '';
+		const template = useSearchVariant ? elements.templates.noSearchResults : elements.templates.noUsers;
+		elements.userList.emptyState.innerHTML = '';
 		if (template) {
-			usersEmptyState.appendChild(template.content.cloneNode(true));
+			elements.userList.emptyState.appendChild(template.content.cloneNode(true));
 		}
-		usersEmptyState.classList.remove('hidden');
-		if (usersTableBlock) usersTableBlock.classList.add('hidden');
+		elements.userList.emptyState.classList.remove('hidden');
+		if (elements.userList.tableBlock) elements.userList.tableBlock.classList.add('hidden');
 	};
 
 	const renderUsers = (users, totalUsers) => {
 		updateTotalUsersCount(totalUsers);
 		if (!users || users.length === 0) {
-			if (usersTableBody) usersTableBody.innerHTML = '';
+			if (elements.userList.tableBody) elements.userList.tableBody.innerHTML = '';
 			renderEmptyState(totalUsers);
 			return;
 		}
-		if (usersEmptyState) usersEmptyState.classList.add('hidden');
-		if (usersTableBlock) usersTableBlock.classList.remove('hidden');
-		usersTableBody.innerHTML = '';
+		if (elements.userList.emptyState) elements.userList.emptyState.classList.add('hidden');
+		if (elements.userList.tableBlock) elements.userList.tableBlock.classList.remove('hidden');
+		elements.userList.tableBody.innerHTML = '';
 		users.forEach((user) => appendUser(user));
 	};
 
 	const updateTotalUsersCount = (totalUsers) => {
-		totalUsersCount.dataset.count = String(totalUsers);
-		totalUsersCount.textContent = String(totalUsers);
+		elements.userList.totalCount.dataset.count = String(totalUsers);
+		elements.userList.totalCount.textContent = String(totalUsers);
 	};
 
 	const setUsersLoading = (isLoading) => {
-		if (usersLoadingStatus) {
-			usersLoadingStatus.classList.toggle('invisible', !isLoading);
-			usersLoadingStatus.classList.toggle('opacity-0', !isLoading);
-			usersLoadingStatus.classList.toggle('opacity-100', isLoading);
-			usersLoadingStatus.setAttribute('aria-hidden', isLoading ? 'false' : 'true');
-			const spinner = usersLoadingStatus.querySelector('svg');
+		if (elements.userList.loadingStatus) {
+			elements.userList.loadingStatus.classList.toggle('invisible', !isLoading);
+			elements.userList.loadingStatus.classList.toggle('opacity-0', !isLoading);
+			elements.userList.loadingStatus.classList.toggle('opacity-100', isLoading);
+			elements.userList.loadingStatus.setAttribute('aria-hidden', isLoading ? 'false' : 'true');
+			const spinner = elements.userList.loadingStatus.querySelector('svg');
 			if (spinner) {
 				spinner.classList.toggle('animate-spin', isLoading);
 			}
 		}
-		if (searchInput) {
-			searchInput.disabled = isLoading;
+		if (elements.search.input) {
+			elements.search.input.disabled = isLoading;
 		}
 	};
 
@@ -176,22 +189,22 @@
 
 	const refreshUsers = async () => {
 		const nameFilter = getNameFilterFromUrl();
-		if (searchInput) {
-			searchInput.value = nameFilter;
+		if (elements.search.input) {
+			elements.search.input.value = nameFilter;
 		}
 		const payload = await fetchUsers(nameFilter);
 		renderUsers(payload.users, payload.totalUsers);
 	};
 
-	form.addEventListener('submit', async (event) => {
+	elements.userForm.form.addEventListener('submit', async (event) => {
 		event.preventDefault();
 		clearErrors();
 		setSubmitting(true);
 
 		try {
-			const response = await fetch(form.action, {
+			const response = await fetch(elements.userForm.form.action, {
 				method: 'POST',
-				body: new FormData(form),
+				body: new FormData(elements.userForm.form),
 				headers: {
 					'X-Requested-With': 'XMLHttpRequest'
 				}
@@ -220,13 +233,12 @@
 			const user = payload && payload.user;
 			if (user) {
 				await refreshUsers();
-				form.reset();
+				elements.userForm.form.reset();
 				clearErrors();
-				dialog.close?.();
+				elements.userForm.dialog.close?.();
 				return;
 			}
 
-			// Fallback for empty-state pages where table DOM isn't present yet.
 			window.location.reload();
 		} catch (error) {
 			showGlobalError('Network error. Please check your connection and try again.');
@@ -235,10 +247,10 @@
 		}
 	});
 
-	searchForm?.addEventListener('submit', async (event) => {
+	elements.search.form?.addEventListener('submit', async (event) => {
 		event.preventDefault();
 		try {
-			const nameFilter = searchInput ? searchInput.value.trim() : '';
+			const nameFilter = elements.search.input ? elements.search.input.value.trim() : '';
 			applySearchQueryToUrl(nameFilter);
 			await refreshUsers();
 		} catch (error) {
@@ -246,10 +258,9 @@
 		}
 	});
 
-	// Native clear (X) does not submit the form; sync URL and reload the list like a search submit.
-	searchInput?.addEventListener('input', () => {
-		if (!searchInput) return;
-		if (searchInput.value !== '') return;
+	elements.search.input?.addEventListener('input', () => {
+		if (!elements.search.input) return;
+		if (elements.search.input.value !== '') return;
 		applySearchQueryToUrl('');
 		void refreshUsers();
 	});
