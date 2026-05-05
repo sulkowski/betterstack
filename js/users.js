@@ -16,6 +16,7 @@
 	const usersEmptyFirstTemplate = document.querySelector('#users-empty-first-template');
 	const usersEmptySearchTemplate = document.querySelector('#users-empty-search-template');
 	const totalUsersCount = document.querySelector('#total-users-count');
+	const usersLoadingStatus = document.querySelector('#users-loading-status');
 	const validationErrors = {};
 
 	form.querySelectorAll('[data-error-for]').forEach((element) => {
@@ -117,23 +118,44 @@
 		totalUsersCount.textContent = String(totalUsers);
 	};
 
-	const fetchUsers = async (nameFilter) => {
-		const searchParams = new URLSearchParams();
-		if (nameFilter) {
-			searchParams.set('name', nameFilter);
-		}
-
-		const response = await fetch(`index.php?${searchParams.toString()}`, {
-			headers: {
-				'X-Requested-With': 'XMLHttpRequest'
+	const setUsersLoading = (isLoading) => {
+		if (usersLoadingStatus) {
+			usersLoadingStatus.classList.toggle('invisible', !isLoading);
+			usersLoadingStatus.classList.toggle('opacity-0', !isLoading);
+			usersLoadingStatus.classList.toggle('opacity-100', isLoading);
+			usersLoadingStatus.setAttribute('aria-hidden', isLoading ? 'false' : 'true');
+			const spinner = usersLoadingStatus.querySelector('svg');
+			if (spinner) {
+				spinner.classList.toggle('animate-spin', isLoading);
 			}
-		});
-
-		if (!response.ok) {
-			throw new Error('Failed to fetch users.');
 		}
+		if (searchInput) {
+			searchInput.disabled = isLoading;
+		}
+	};
 
-		return response.json();
+	const fetchUsers = async (nameFilter) => {
+		setUsersLoading(true);
+		try {
+			const searchParams = new URLSearchParams();
+			if (nameFilter) {
+				searchParams.set('name', nameFilter);
+			}
+
+			const response = await fetch(`index.php?${searchParams.toString()}`, {
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest'
+				}
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch users.');
+			}
+
+			return response.json();
+		} finally {
+			setUsersLoading(false);
+		}
 	};
 
 	const getNameFilterFromUrl = () => {
