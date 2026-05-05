@@ -196,12 +196,16 @@ class BaseModel {
 
 	/**
 	 * Builds WHERE string based on given conditions
-	 * Can handle basic equality or IN using array as condition value
+	 * - Scalar: equality (`field` = value)
+	 * - Numeric array of scalars: IN
+	 * - Associative array with key "like": LIKE (e.g. array('like' => '%term%'))
 	 */
 	private static function buildWhere($conditions){
 		$where = '1';
 		foreach($conditions as $key => $condition){
-			if(is_array($condition)){
+			if(is_array($condition) && array_key_exists('like', $condition)){
+				$where .= ' AND `'.$key.'` LIKE '.self::escapeValue($condition['like']);
+			}elseif(is_array($condition)){
 				$condString = implode(', ',self::escapeValue($condition));
 				$where .= ' AND `'.$key.'` IN ('.$condString.')';
 			}else

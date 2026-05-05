@@ -8,7 +8,7 @@ foreach (glob(dirname(__FILE__).'/../models/*.php') as $filename){
 
 /**
  * App
- * provides interface for database manipulation, accessing config and rendering views
+ * provides interface for database manipulation, accessing config, rendering views, and JSON responses
  */
 class App {
 	
@@ -50,7 +50,20 @@ class App {
 		// Render $content in layout
 		include './views/layout.php';
 	}
-	
+
+	/**
+	 * Send a JSON response and end the request.
+	 *
+	 * @param array $payload Data to json_encode
+	 * @param int   $statusCode HTTP status (default 200)
+	 */
+	public function renderJson($payload, $statusCode = 200) {
+		header('Content-Type: application/json; charset=utf-8');
+		http_response_code($statusCode);
+		echo json_encode($payload);
+		exit;
+	}
+
 }
 
 return new App();

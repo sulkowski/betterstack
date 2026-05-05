@@ -3,26 +3,27 @@
 		<h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">User Management</h1>
 		<p class="mt-1 text-sm text-slate-600">View and manage your users in one place.</p>
 	</div>
-	<button type="button" command="show-modal" commandfor="create-user-dialog" class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2">
-		Add User
-	</button>
+	<div class="flex items-center gap-3">
+		<form id="user-search-form" class="flex items-center gap-2">
+			<label for="user-search-input" class="sr-only">Search by name</label>
+			<input id="user-search-input" name="name" type="search" placeholder="Search by name" value="<?=htmlspecialchars($searchName, ENT_QUOTES, 'UTF-8')?>" class="box-border h-9 w-56 rounded-md border-0 bg-white px-3 text-sm leading-9 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
+		</form>
+		<button type="button" command="show-modal" commandfor="create-user-dialog" class="inline-flex h-9 items-center justify-center rounded-md bg-indigo-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2">
+			Add User
+		</button>
+	</div>
 </header>
 
 <div class="space-y-6">
-	<?php if (count($users) === 0) { ?>
-		<section class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
-			<div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50">
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="h-6 w-6 text-indigo-600">
-					<path d="M15 19.128a9.38 9.38 0 0 0 2.625.372A9.337 9.337 0 0 0 22.5 18c-1.343-2.56-4.065-4.5-7.5-4.5a9.37 9.37 0 0 0-1.125.068m0 0A5.002 5.002 0 0 1 7.5 9a5 5 0 0 1 10 0 5.002 5.002 0 0 1-3.625 4.568m0 0A9.372 9.372 0 0 0 6.375 19.5c-1.12 0-2.194-.196-3.188-.556 1.343-2.56 4.065-4.5 7.5-4.5 1.314 0 2.566.284 3.688.796Z" stroke-linecap="round" stroke-linejoin="round" />
-				</svg>
-			</div>
-			<h2 class="mx-auto mt-2 max-w-md text-lg font-semibold text-slate-900">Add your first user to get started.</h2>
-			<button type="button" command="show-modal" commandfor="create-user-dialog" class="mt-5 inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2">
-				Add User
-			</button>
-		</section>
-	<?php } else { ?>
-		<section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+	<section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+		<div id="users-empty-state" class="px-6 py-14 <?=count($users) > 0 ? 'hidden' : ''?>">
+			<?php if ($totalUsers === 0) { ?>
+				<?php include __DIR__.'/partials/no-users.php'; ?>
+			<?php } else { ?>
+				<?php include __DIR__.'/partials/no-results.php'; ?>
+			<?php } ?>
+		</div>
+		<div id="users-table-block" class="<?=count($users) > 0 ? '' : 'hidden'?>">
 			<div class="overflow-x-auto">
 				<table class="min-w-full text-sm">
 					<thead>
@@ -33,25 +34,21 @@
 						</tr>
 					</thead>
 					<tbody id="users-table-body" class="divide-y divide-slate-100 border-y border-slate-100 bg-white">
-						<?php foreach($users as $user){ ?>
+						<?php foreach ($users as $user) { ?>
 						<tr>
-							<td class="whitespace-nowrap px-6 py-4 font-medium text-slate-950"><?=$user->getName()?></td>
-							<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=$user->getEmail()?></td>
-							<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=$user->getCity()?></td>
+							<td class="whitespace-nowrap px-6 py-4 font-medium text-slate-950"><?=htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8')?></td>
+							<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8')?></td>
+							<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=htmlspecialchars($user['city'], ENT_QUOTES, 'UTF-8')?></td>
 						</tr>
 						<?php } ?>
 					</tbody>
-					<tfoot>
-						<tr>
-							<td colspan="3" class="px-6 py-3.5 text-right font-medium text-slate-500">
-								Total users: <span id="total-users-count" data-count="<?=count($users)?>"><?=count($users)?></span>
-							</td>
-						</tr>
-					</tfoot>
 				</table>
 			</div>
-		</section>
-	<?php } ?>
+		</div>
+		<div class="border-t border-slate-100 px-6 py-3.5 text-right text-sm font-medium text-slate-500">
+			Total users: <span id="total-users-count" data-count="<?=$totalUsers?>"><?=$totalUsers?></span>
+		</div>
+	</section>
 </div>
 
 <template id="user-row-template">
@@ -60,6 +57,14 @@
 		<td data-field="email" class="whitespace-nowrap px-6 py-4 text-slate-600"></td>
 		<td data-field="city" class="whitespace-nowrap px-6 py-4 text-slate-600"></td>
 	</tr>
+</template>
+
+<template id="users-empty-first-template">
+	<?php include __DIR__.'/partials/no-users.php'; ?>
+</template>
+
+<template id="users-empty-search-template">
+	<?php include __DIR__.'/partials/no-results.php'; ?>
 </template>
 
 <el-dialog>

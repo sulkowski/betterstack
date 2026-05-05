@@ -6,9 +6,15 @@
 	if (!form) return;
 
 	const submitButton = dialog.querySelector('button[form="create-user-form"]');
+	const searchForm = document.querySelector('#user-search-form');
+	const searchInput = document.querySelector('#user-search-input');
 	const formError = form.querySelector('#create-user-form-error');
+	const usersEmptyState = document.querySelector('#users-empty-state');
+	const usersTableBlock = document.querySelector('#users-table-block');
 	const usersTableBody = document.querySelector('#users-table-body');
 	const userRowTemplate = document.querySelector('#user-row-template');
+	const usersEmptyFirstTemplate = document.querySelector('#users-empty-first-template');
+	const usersEmptySearchTemplate = document.querySelector('#users-empty-search-template');
 	const totalUsersCount = document.querySelector('#total-users-count');
 	const validationErrors = {};
 
@@ -80,9 +86,79 @@
 		usersTableBody.appendChild(rowFragment);
 	};
 
+	const renderEmptyState = (totalUsersForEmpty) => {
+		if (!usersEmptyState) return;
+		const nameFilter = searchInput ? searchInput.value.trim() : '';
+		const useSearchVariant = nameFilter !== '' && totalUsersForEmpty > 0;
+		const template = useSearchVariant ? usersEmptySearchTemplate : usersEmptyFirstTemplate;
+		usersEmptyState.innerHTML = '';
+		if (template) {
+			usersEmptyState.appendChild(template.content.cloneNode(true));
+		}
+		usersEmptyState.classList.remove('hidden');
+		if (usersTableBlock) usersTableBlock.classList.add('hidden');
+	};
+
+	const renderUsers = (users, totalUsers) => {
+		updateTotalUsersCount(totalUsers);
+		if (!users || users.length === 0) {
+			if (usersTableBody) usersTableBody.innerHTML = '';
+			renderEmptyState(totalUsers);
+			return;
+		}
+		if (usersEmptyState) usersEmptyState.classList.add('hidden');
+		if (usersTableBlock) usersTableBlock.classList.remove('hidden');
+		usersTableBody.innerHTML = '';
+		users.forEach((user) => appendUser(user));
+	};
+
 	const updateTotalUsersCount = (totalUsers) => {
 		totalUsersCount.dataset.count = String(totalUsers);
 		totalUsersCount.textContent = String(totalUsers);
+	};
+
+	const fetchUsers = async (nameFilter) => {
+		const searchParams = new URLSearchParams();
+		if (nameFilter) {
+			searchParams.set('name', nameFilter);
+		}
+
+		const response = await fetch(`index.php?${searchParams.toString()}`, {
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest'
+			}
+		});
+
+		if (!response.ok) {
+			throw new Error('Failed to fetch users.');
+		}
+
+		return response.json();
+	};
+
+	const getNameFilterFromUrl = () => {
+		const params = new URLSearchParams(window.location.search);
+		const name = params.get('name');
+		return name == null ? '' : name.trim();
+	};
+
+	const applySearchQueryToUrl = (nameFilter) => {
+		const url = new URL(window.location.href);
+		if (nameFilter) {
+			url.searchParams.set('name', nameFilter);
+		} else {
+			url.searchParams.delete('name');
+		}
+		window.history.replaceState({}, '', url.pathname + url.search);
+	};
+
+	const refreshUsers = async () => {
+		const nameFilter = getNameFilterFromUrl();
+		if (searchInput) {
+			searchInput.value = nameFilter;
+		}
+		const payload = await fetchUsers(nameFilter);
+		renderUsers(payload.users, payload.totalUsers);
 	};
 
 	form.addEventListener('submit', async (event) => {
@@ -119,12 +195,9 @@
 				return;
 			}
 
-			// Update only the affected UI parts instead of reloading the whole page.
 			const user = payload && payload.user;
-			const totalUsers = payload && payload.totalUsers;
 			if (user) {
-				appendUser(user);
-				updateTotalUsersCount(totalUsers);
+				await refreshUsers();
 				form.reset();
 				clearErrors();
 				dialog.close?.();
@@ -138,5 +211,24 @@
 		} finally {
 			setSubmitting(false);
 		}
+	});
+
+	searchForm?.addEventListener('submit', async (event) => {
+		event.preventDefault();
+		try {
+			const nameFilter = searchInput ? searchInput.value.trim() : '';
+			applySearchQueryToUrl(nameFilter);
+			await refreshUsers();
+		} catch (error) {
+			showGlobalError('Unable to search users right now. Please try again.');
+		}
+	});
+
+	// Native clear (X) does not submit the form; sync URL and reload the list like a search submit.
+	searchInput?.addEventListener('input', () => {
+		if (!searchInput) return;
+		if (searchInput.value !== '') return;
+		applySearchQueryToUrl('');
+		void refreshUsers();
 	});
 })();

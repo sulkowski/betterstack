@@ -2,20 +2,12 @@
 
 $app = require "./core/app.php";
 
-header('Content-Type: application/json; charset=utf-8');
-
-function respondWithJson($statusCode, $payload) {
-	http_response_code($statusCode);
-	echo json_encode($payload);
-	exit;
-}
-
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 	header('Allow: POST');
-	respondWithJson(405, array(
+	$app->renderJson(array(
 		'status' => 'error',
 		'message' => 'Method not allowed.'
-	));
+	), 405);
 }
 
 $attributes = array(
@@ -29,16 +21,16 @@ $user = $result['model'];
 $errors = $result['errors'];
 
 if (!empty($errors)) {
-	respondWithJson(422, array(
+	$app->renderJson(array(
 		'status' => 'error',
 		'message' => 'Validation failed.',
 		'errors' => $errors
-	));
+	), 422);
 }
 
-$totalUsers = count(User::find($app->db, array('id')));
+$totalUsers = count(User::find($app->db, '*'));
 
-respondWithJson(201, array(
+$app->renderJson(array(
 	'status' => 'ok',
 	'message' => 'User created successfully.',
 	'user' => array(
@@ -48,4 +40,4 @@ respondWithJson(201, array(
 		'city' => $user->getCity()
 	),
 	'totalUsers' => $totalUsers
-));
+), 201);
