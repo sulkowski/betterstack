@@ -21,7 +21,7 @@ class Database {
 			echo "Failed to connect to MySQL: " . $this->mysqli->connect_error;
 		}
 		// Set correct encoding
-		$this->mysqli->query("SET CHARACTER SET utf8");
+		$this->mysqli->set_charset('utf8mb4');
 	}
 	
 	/**

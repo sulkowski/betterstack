@@ -1,3 +1,5 @@
 .settings
 .project
 /config/database.php
+.env
+ssl/
