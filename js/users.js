@@ -47,7 +47,7 @@
 			element.textContent = '';
 		});
 
-		['name', 'email', 'city'].forEach((fieldName) => {
+		['name', 'email', 'city', 'phone'].forEach((fieldName) => {
 			const field = elements.userForm.form.elements[fieldName];
 			if (!field) return;
 			field.classList.remove('ring-red-300', 'focus:ring-red-500');
@@ -92,10 +92,12 @@
 		const nameCell = rowElement.querySelector('[data-field="name"]');
 		const emailCell = rowElement.querySelector('[data-field="email"]');
 		const cityCell = rowElement.querySelector('[data-field="city"]');
+		const phoneCell = rowElement.querySelector('[data-field="phone"]');
 
 		nameCell.textContent = user.name || '';
 		emailCell.textContent = user.email || '';
 		cityCell.textContent = user.city || '';
+		if (phoneCell) phoneCell.textContent = user.phone || '';
 
 		elements.userList.tableBody.appendChild(rowFragment);
 	};

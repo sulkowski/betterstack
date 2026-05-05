@@ -15,7 +15,8 @@ foreach ($userModels as $user) {
 		'id' => $user->getId(),
 		'name' => $user->getName(),
 		'email' => $user->getEmail(),
-		'city' => $user->getCity()
+		'city' => $user->getCity(),
+		'phone' => $user->getPhone()
 	);
 }
 $totalUsers = count(User::find($app->db, '*'));

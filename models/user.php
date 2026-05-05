@@ -24,6 +24,10 @@ class User extends BaseModel{
 		return $this->getField('city');
 	}
 
+	public function getPhone() {
+		return $this->getField('phone');
+	}
+
 	/**
 	 * Validate current user attributes.
 	 * Returns errors keyed by attribute name.
@@ -32,6 +36,7 @@ class User extends BaseModel{
 		$name = isset($this->fields['name']) ? $this->fields['name'] : '';
 		$email = isset($this->fields['email']) ? $this->fields['email'] : '';
 		$city = isset($this->fields['city']) ? $this->fields['city'] : '';
+		$phone = isset($this->fields['phone']) ? trim($this->fields['phone']) : '';
 
 		$errors = array();
 
@@ -58,6 +63,20 @@ class User extends BaseModel{
 			$errors['city'] = 'City is required.';
 		} elseif (mb_strlen($city) < 2 || mb_strlen($city) > 100) {
 			$errors['city'] = 'City must be 2 to 100 characters.';
+		}
+
+		if ($phone === '') {
+			$errors['phone'] = 'Phone number is required.';
+		} elseif (mb_strlen($phone) > 20) {
+			$errors['phone'] = 'Phone number must be 20 characters or fewer.';
+		} else {
+			$digits = preg_replace('/\D/', '', $phone);
+			$digitLen = strlen($digits);
+			if ($digitLen < 10 || $digitLen > 15) {
+				$errors['phone'] = 'Enter a valid phone number (10–15 digits, optional + prefix).';
+			} else {
+				$this->setField('phone', $phone);
+			}
 		}
 
 		return $errors;

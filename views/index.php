@@ -40,6 +40,7 @@
 							<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">Name</th>
 							<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">E-mail</th>
 							<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">City</th>
+							<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">Phone</th>
 						</tr>
 					</thead>
 					<tbody id="users-table-body" class="divide-y divide-slate-100 border-y border-slate-100 bg-white">
@@ -48,6 +49,7 @@
 							<td class="whitespace-nowrap px-6 py-4 font-medium text-slate-950"><?=htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8')?></td>
 							<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8')?></td>
 							<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=htmlspecialchars($user['city'], ENT_QUOTES, 'UTF-8')?></td>
+							<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=htmlspecialchars(isset($user['phone']) ? $user['phone'] : '', ENT_QUOTES, 'UTF-8')?></td>
 						</tr>
 						<?php } ?>
 					</tbody>
@@ -65,6 +67,7 @@
 		<td data-field="name" class="whitespace-nowrap px-6 py-4 font-medium text-slate-950"></td>
 		<td data-field="email" class="whitespace-nowrap px-6 py-4 text-slate-600"></td>
 		<td data-field="city" class="whitespace-nowrap px-6 py-4 text-slate-600"></td>
+		<td data-field="phone" class="whitespace-nowrap px-6 py-4 text-slate-600"></td>
 	</tr>
 </template>
 
@@ -112,6 +115,12 @@
 						<label for="city" class="mb-1.5 block text-sm font-medium text-slate-900">City</label>
 						<input name="city" type="text" id="city" required class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
 						<p class="mt-1 hidden text-sm text-red-600" data-error-for="city"></p>
+					</div>
+
+					<div>
+						<label for="phone" class="mb-1.5 block text-sm font-medium text-slate-900">Phone</label>
+						<input name="phone" type="tel" id="phone" inputmode="tel" autocomplete="tel" required maxlength="20" placeholder="+1 212 555 1234" class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
+						<p class="mt-1 hidden text-sm text-red-600" data-error-for="phone"></p>
 					</div>
 				</form>
 				<div class="mt-6 bg-slate-50 px-6 py-4">
