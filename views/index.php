@@ -32,7 +32,7 @@
 							<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">City</th>
 						</tr>
 					</thead>
-					<tbody class="divide-y divide-slate-100 border-y border-slate-100 bg-white">
+					<tbody id="users-table-body" class="divide-y divide-slate-100 border-y border-slate-100 bg-white">
 						<?php foreach($users as $user){ ?>
 						<tr>
 							<td class="whitespace-nowrap px-6 py-4 font-medium text-slate-950"><?=$user->getName()?></td>
@@ -43,7 +43,9 @@
 					</tbody>
 					<tfoot>
 						<tr>
-							<td colspan="3" class="px-6 py-3.5 text-right font-medium text-slate-500">Total users: <?=count($users)?></td>
+							<td colspan="3" class="px-6 py-3.5 text-right font-medium text-slate-500">
+								Total users: <span id="total-users-count" data-count="<?=count($users)?>"><?=count($users)?></span>
+							</td>
 						</tr>
 					</tfoot>
 				</table>
@@ -51,6 +53,14 @@
 		</section>
 	<?php } ?>
 </div>
+
+<template id="user-row-template">
+	<tr>
+		<td data-field="name" class="whitespace-nowrap px-6 py-4 font-medium text-slate-950"></td>
+		<td data-field="email" class="whitespace-nowrap px-6 py-4 text-slate-600"></td>
+		<td data-field="city" class="whitespace-nowrap px-6 py-4 text-slate-600"></td>
+	</tr>
+</template>
 
 <el-dialog>
 	<dialog id="create-user-dialog" aria-labelledby="create-user-dialog-title" class="fixed inset-0 z-50 size-auto max-h-none max-w-none overflow-y-auto bg-transparent p-4 backdrop:bg-transparent">
@@ -70,20 +80,24 @@
 					</button>
 				</div>
 
-				<form id="create-user-form" method="post" action="create.php" class="mt-5 space-y-4 px-6">
+				<form id="create-user-form" method="post" action="create.php" class="mt-5 space-y-4 px-6" novalidate>
+					<div id="create-user-form-error" class="hidden rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"></div>
 					<div>
 						<label for="name" class="mb-1.5 block text-sm font-medium text-slate-900">Name</label>
 						<input name="name" type="text" id="name" required class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
+						<p class="mt-1 hidden text-sm text-red-600" data-error-for="name"></p>
 					</div>
 
 					<div>
 						<label for="email" class="mb-1.5 block text-sm font-medium text-slate-900">E-mail</label>
 						<input name="email" type="email" id="email" required class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
+						<p class="mt-1 hidden text-sm text-red-600" data-error-for="email"></p>
 					</div>
 
 					<div>
 						<label for="city" class="mb-1.5 block text-sm font-medium text-slate-900">City</label>
 						<input name="city" type="text" id="city" required class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
+						<p class="mt-1 hidden text-sm text-red-600" data-error-for="city"></p>
 					</div>
 				</form>
 				<div class="mt-6 bg-slate-50 px-6 py-4">
@@ -95,3 +109,7 @@
 		</div>
 	</dialog>
 </el-dialog>
+
+<?php ob_start(); ?>
+<script src="js/users.js" defer></script>
+<?php $scripts = ob_get_clean(); ?>

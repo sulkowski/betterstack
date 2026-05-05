@@ -15,5 +15,8 @@
 	<main class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
 		<?= $content ?>
 	</main>
+	<?php if (isset($scripts)) { ?>
+		<?= $scripts ?>
+	<?php } ?>
   </body>
 </html>

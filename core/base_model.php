@@ -82,6 +82,48 @@ class BaseModel {
 			$this->setField($field,$value);
 		}
 	}
+
+	/**
+	 * Build model instance from raw attributes.
+	 * Child classes can override normalizeAttributes hook.
+	 */
+	public static function build($db, $attributes){
+		$className = static::className;
+		$model = new $className($db);
+		$model->setFields($attributes);
+		return $model;
+	}
+
+	/**
+	 * Build, validate and persist a new record.
+	 * Returns array with model instance and validation errors.
+	 */
+	public static function create($db, $attributes){
+		$model = static::build($db, $attributes);
+		$errors = $model->validate();
+
+		if(!empty($errors)){
+			return array(
+				'model' => null,
+				'errors' => $errors
+			);
+		}
+
+		$model->insert($model->fields);
+
+		return array(
+			'model' => $model,
+			'errors' => array()
+		);
+	}
+
+	/**
+	 * Hook for child class validation.
+	 * Child classes should override with model-specific rules.
+	 */
+	public function validate(){
+		return array();
+	}
 	
 	/**
 	 * Escapes values for inserting them into database
