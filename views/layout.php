@@ -3,25 +3,17 @@
   <head>
   	<meta charset="UTF-8">
   	
-    <title>PHP Test Application</title>
+    <title>User Management</title>
     
 	<link href="favicon.ico" type="image/x-icon" rel="icon" />
 	<link href="favicon.ico" type="image/x-icon" rel="shortcut icon" />	
-    
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/application.css">
-    
-    <script type="text/javascript" charset="utf-8" src="js/jquery.min.js"></script>
-	<script type="text/javascript" charset="utf-8" src="js/bootstrap.min.js"></script>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 
   </head>
-  <body>
-
-  <div class="container">
-    
-    <?= $content ?>
-    
-  </div>  
-
+  <body class="min-h-screen bg-slate-100 py-10 sm:py-14">
+	<main class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+		<?= $content ?>
+	</main>
   </body>
 </html>
