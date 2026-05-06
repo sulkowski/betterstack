@@ -7,7 +7,7 @@
     
 	<link href="favicon.ico" type="image/x-icon" rel="icon" />
 	<link href="favicon.ico" type="image/x-icon" rel="shortcut icon" />	
-	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="css/tailwind.css">
 	<script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 
   </head>
