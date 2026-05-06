@@ -4,7 +4,7 @@
 		<p class="mt-1 text-sm text-slate-600">View and manage your users in one place.</p>
 	</div>
 	<div class="flex w-full min-w-0 flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-end sm:gap-3">
-		<form id="user-search-form" method="get" class="flex w-full shrink-0 sm:w-56" role="search">
+		<form method="get" class="flex w-full shrink-0 sm:w-56" role="search">
 			<label for="user-search-input" class="sr-only">Search by name</label>
 			<input id="user-search-input" name="name" type="search" placeholder="Search by name" value="<?=htmlspecialchars($searchName, ENT_QUOTES, 'UTF-8')?>" class="box-border h-9 min-w-0 w-full rounded-md border-0 bg-white px-3 text-sm leading-9 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500"/>
 		</form>
@@ -17,7 +17,7 @@
 <div class="space-y-6">
 	<section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 		<?php if ((int)$pagination['totalRecords'] === 0) { ?>
-		<div id="users-empty-state" class="px-6 py-14">
+		<div class="px-6 py-14">
 			<?php if ($searchName === '') {
 				$title = 'There are no users yet';
 				$message = 'Create your first user to get started.';
@@ -30,54 +30,52 @@
 			<?php include __DIR__.'/empty-state.php'; ?>
 		</div>
 		<?php } else { ?>
-		<div id="users-table-block">
-			<div class="overflow-x-auto">
-				<table class="min-w-full text-sm">
-					<thead>
-						<tr>
-							<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">Name</th>
-							<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">E-mail</th>
-							<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">City</th>
-							<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">Phone</th>
-							<th scope="col" class="px-6 py-3.5 text-right font-semibold text-slate-900"><span class="sr-only">Actions</span></th>
-						</tr>
-					</thead>
-					<tbody id="users-table-body" class="divide-y divide-slate-100 border-y border-slate-100 bg-white">
-						<?php foreach ($users as $user) { ?>
-						<tr>
-							<td class="whitespace-nowrap px-6 py-4 font-medium text-slate-950"><?=htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8')?></td>
-							<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8')?></td>
-							<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=htmlspecialchars($user['city'], ENT_QUOTES, 'UTF-8')?></td>
-							<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=htmlspecialchars($user['phone'], ENT_QUOTES, 'UTF-8')?></td>
-							<td class="whitespace-nowrap px-6 py-4 text-right">
-								<el-dropdown class="inline-block text-left [--button-width:2rem]">
-									<button type="button" class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2" aria-haspopup="menu">
-										<span class="sr-only">Open actions</span>
-										<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
-											<path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"></path>
-										</svg>
-									</button>
-									<el-menu anchor="bottom end" class="mt-1 w-44 origin-top-right rounded-md border border-slate-200 bg-white p-1 shadow-lg ring-1 ring-slate-200/60 focus:outline-none">
-										<div>
-											<button
-												type="button"
-												class="block w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm text-red-600 transition hover:bg-red-50 hover:text-red-700"
-												command="show-modal"
-												commandfor="delete-user-dialog"
-												data-delete-user-id="<?=htmlspecialchars((string)$user['id'], ENT_QUOTES, 'UTF-8')?>"
-												data-delete-user-name="<?=htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8')?>"
-											>
-												Remove
-											</button>
-										</div>
-									</el-menu>
-								</el-dropdown>
-							</td>
-						</tr>
-						<?php } ?>
-					</tbody>
-				</table>
-			</div>
+		<div class="overflow-x-auto">
+			<table class="min-w-full text-sm">
+				<thead>
+					<tr>
+						<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">Name</th>
+						<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">E-mail</th>
+						<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">City</th>
+						<th scope="col" class="px-6 py-3.5 text-left font-semibold text-slate-900">Phone</th>
+						<th scope="col" class="px-6 py-3.5 text-right font-semibold text-slate-900"><span class="sr-only">Actions</span></th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-slate-100 border-y border-slate-100 bg-white">
+					<?php foreach ($users as $user) { ?>
+					<tr>
+						<td class="whitespace-nowrap px-6 py-4 font-medium text-slate-950"><?=htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8')?></td>
+						<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8')?></td>
+						<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=htmlspecialchars($user['city'], ENT_QUOTES, 'UTF-8')?></td>
+						<td class="whitespace-nowrap px-6 py-4 text-slate-600"><?=htmlspecialchars($user['phone'], ENT_QUOTES, 'UTF-8')?></td>
+						<td class="whitespace-nowrap px-6 py-4 text-right">
+							<el-dropdown class="inline-block text-left [--button-width:2rem]">
+								<button type="button" class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2" aria-haspopup="menu">
+									<span class="sr-only">Open actions</span>
+									<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
+										<path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"></path>
+									</svg>
+								</button>
+								<el-menu anchor="bottom end" class="mt-1 w-44 origin-top-right rounded-md border border-slate-200 bg-white p-1 shadow-lg ring-1 ring-slate-200/60 focus:outline-none">
+									<div>
+										<button
+											type="button"
+											class="block w-full cursor-pointer rounded-md px-3 py-2 text-left text-sm text-red-600 transition hover:bg-red-50 hover:text-red-700"
+											command="show-modal"
+											commandfor="delete-user-dialog"
+											data-delete-user-id="<?=htmlspecialchars((string)$user['id'], ENT_QUOTES, 'UTF-8')?>"
+											data-delete-user-name="<?=htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8')?>"
+										>
+											Remove
+										</button>
+									</div>
+								</el-menu>
+							</el-dropdown>
+						</td>
+					</tr>
+					<?php } ?>
+				</tbody>
+			</table>
 		</div>
 		<?php include __DIR__.'/pagination.php'; ?>
 		<?php } ?>

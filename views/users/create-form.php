@@ -19,26 +19,26 @@
 				<form id="create-user-form" method="post" action="create.php" class="mt-5 space-y-4 px-6" novalidate>
 					<div id="create-user-form-error" class="hidden rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"></div>
 					<div>
-						<label for="name" class="mb-1.5 block text-sm font-medium text-slate-900">Name <span aria-hidden="true" class="text-red-600">*</span></label>
-						<input name="name" type="text" id="name" required placeholder="Maria Novák" class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
+						<label for="create-user-name" class="mb-1.5 block text-sm font-medium text-slate-900">Name <span aria-hidden="true" class="text-red-600">*</span></label>
+						<input name="name" type="text" id="create-user-name" required placeholder="Maria Novák" class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
 						<p class="mt-1 hidden text-sm text-red-600" data-error-for="name"></p>
 					</div>
 
 					<div>
-						<label for="email" class="mb-1.5 block text-sm font-medium text-slate-900">E-mail <span aria-hidden="true" class="text-red-600">*</span></label>
-						<input name="email" type="email" id="email" required placeholder="maria@example.com" autocomplete="email" class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
+						<label for="create-user-email" class="mb-1.5 block text-sm font-medium text-slate-900">E-mail <span aria-hidden="true" class="text-red-600">*</span></label>
+						<input name="email" type="email" id="create-user-email" required placeholder="maria@example.com" autocomplete="email" class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
 						<p class="mt-1 hidden text-sm text-red-600" data-error-for="email"></p>
 					</div>
 
 					<div>
-						<label for="city" class="mb-1.5 block text-sm font-medium text-slate-900">City <span aria-hidden="true" class="text-red-600">*</span></label>
-						<input name="city" type="text" id="city" required placeholder="Praha" class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
+						<label for="create-user-city" class="mb-1.5 block text-sm font-medium text-slate-900">City <span aria-hidden="true" class="text-red-600">*</span></label>
+						<input name="city" type="text" id="create-user-city" required placeholder="Praha" class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
 						<p class="mt-1 hidden text-sm text-red-600" data-error-for="city"></p>
 					</div>
 
 					<div>
-						<label for="phone" class="mb-1.5 block text-sm font-medium text-slate-900">Phone <span aria-hidden="true" class="text-red-600">*</span></label>
-						<input name="phone" type="tel" id="phone" inputmode="tel" autocomplete="tel" required maxlength="20" placeholder="+420 601 123 456" class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
+						<label for="create-user-phone" class="mb-1.5 block text-sm font-medium text-slate-900">Phone <span aria-hidden="true" class="text-red-600">*</span></label>
+						<input name="phone" type="tel" id="create-user-phone" inputmode="tel" autocomplete="tel" required maxlength="20" placeholder="+420 601 123 456" class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
 						<p class="mt-1 hidden text-sm text-red-600" data-error-for="phone"></p>
 					</div>
 				</form>
