@@ -34,21 +34,8 @@ class App {
 		}
 	}	
 	
-	/**
-	 * Renders given view with given set of variables
-	 *
-	 * @param string $viewfile path of the view file relative to the views directory, without the ending .php
-	 * @param array  $vars     variables for the view; optional `flashMessages` list is merged after session
-	 *                         flash from flash_take_all() (each item is a string or legacy `message` array)
-	 */
 	public function renderView($viewfile, $vars = array()) {
-		$sessionFlash = flash_take_all();
-		$extraFlash = array();
-		if (isset($vars['flashMessages']) && is_array($vars['flashMessages'])) {
-			$extraFlash = $vars['flashMessages'];
-			unset($vars['flashMessages']);
-		}
-		$vars['flashMessages'] = array_merge($sessionFlash, $extraFlash);
+		$vars['flashMessages'] = flash_take_all();
 
 		// Render array to usable variables
 		foreach ($vars as $key => $value) {
