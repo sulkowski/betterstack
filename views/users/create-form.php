@@ -38,7 +38,7 @@
 
 					<div>
 						<label for="phone" class="mb-1.5 block text-sm font-medium text-slate-900">Phone <span aria-hidden="true" class="text-red-600">*</span></label>
-						<input name="phone" type="tel" id="phone" inputmode="tel" autocomplete="tel" required maxlength="20" placeholder="+48 512 345 678 or 512 345 678" class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
+						<input name="phone" type="tel" id="phone" inputmode="tel" autocomplete="tel" required maxlength="20" placeholder="+420 601 123 456" class="block w-full rounded-md border-0 px-3 py-2 text-slate-900 ring-1 ring-inset ring-slate-300 outline-none transition focus:ring-2 focus:ring-indigo-500"/>
 						<p class="mt-1 hidden text-sm text-red-600" data-error-for="phone"></p>
 					</div>
 				</form>
