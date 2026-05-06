@@ -5,25 +5,27 @@
 	const form = dialog.querySelector('#create-user-form');
 	if (!form) return;
 
-	const elements = {
-		userForm: {
-			dialog,
-			form,
-			submitButton: dialog.querySelector('button[form="create-user-form"]'),
-			formError: form.querySelector('#create-user-form-error'),
-		},
-	};
-
+	const submitButton = dialog.querySelector('button[form="create-user-form"]');
+	const formError = form.querySelector('#create-user-form-error');
 	const validationErrors = {};
 
 	form.querySelectorAll('[data-error-for]').forEach((element) => {
 		validationErrors[element.getAttribute('data-error-for')] = element;
 	});
 
+	const redirectFromLocationHeader = (response) => {
+		const location = response.headers.get('Location') ?? response.headers.get('location');
+		if (location) {
+			window.location.href = new URL(location, window.location.href).href;
+		} else {
+			window.location.reload();
+		}
+	};
+
 	const clearErrors = () => {
-		if (elements.userForm.formError) {
-			elements.userForm.formError.classList.add('hidden');
-			elements.userForm.formError.textContent = '';
+		if (formError) {
+			formError.classList.add('hidden');
+			formError.textContent = '';
 		}
 
 		Object.values(validationErrors).forEach((element) => {
@@ -32,7 +34,7 @@
 		});
 
 		['name', 'email', 'city', 'phone'].forEach((fieldName) => {
-			const field = elements.userForm.form.elements[fieldName];
+			const field = form.elements[fieldName];
 			if (!field) return;
 			field.classList.remove('ring-red-300', 'focus:ring-red-500');
 			field.classList.add('ring-slate-300', 'focus:ring-indigo-500');
@@ -41,14 +43,14 @@
 	};
 
 	const showFormError = (message) => {
-		if (!elements.userForm.formError) return;
-		elements.userForm.formError.textContent = message;
-		elements.userForm.formError.classList.remove('hidden');
+		if (!formError) return;
+		formError.textContent = message;
+		formError.classList.remove('hidden');
 	};
 
 	const setFieldError = (fieldName, message) => {
 		const fieldError = validationErrors[fieldName];
-		const field = elements.userForm.form.elements[fieldName];
+		const field = form.elements[fieldName];
 		if (fieldError) {
 			fieldError.textContent = message;
 			fieldError.classList.remove('hidden');
@@ -61,23 +63,22 @@
 	};
 
 	const setSubmitting = (isSubmitting) => {
-		if (elements.userForm.submitButton) {
-			elements.userForm.submitButton.disabled = isSubmitting;
-			elements.userForm.submitButton.classList.toggle('opacity-70', isSubmitting);
-			elements.userForm.submitButton.classList.toggle('cursor-not-allowed', isSubmitting);
-			elements.userForm.submitButton.textContent = isSubmitting ? 'Creating...' : 'Create User';
-		}
+		if (!submitButton) return;
+		submitButton.disabled = isSubmitting;
+		submitButton.classList.toggle('opacity-70', isSubmitting);
+		submitButton.classList.toggle('cursor-not-allowed', isSubmitting);
+		submitButton.textContent = isSubmitting ? 'Creating...' : 'Create User';
 	};
 
-	elements.userForm.form.addEventListener('submit', async (event) => {
+	form.addEventListener('submit', async (event) => {
 		event.preventDefault();
 		clearErrors();
 		setSubmitting(true);
 
 		try {
-			const response = await fetch(elements.userForm.form.action, {
+			const response = await fetch(form.action, {
 				method: 'POST',
-				body: new FormData(elements.userForm.form),
+				body: new FormData(form),
 				headers: {
 					'X-Requested-With': 'XMLHttpRequest',
 				},
@@ -85,12 +86,7 @@
 			});
 
 			if (response.ok) {
-				const location = response.headers.get('Location') ?? response.headers.get('location');
-				if (location) {
-					window.location.href = new URL(location, window.location.href).href;
-				} else {
-					window.location.reload();
-				}
+				redirectFromLocationHeader(response);
 				return;
 			}
 
