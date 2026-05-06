@@ -1,5 +1,7 @@
 .settings
 .project
+node_modules/
 /config/database.php
 .env
 ssl/
+/public/css/app.css

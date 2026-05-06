@@ -1,16 +1,15 @@
 <?php
 
 /**
- * User model
+ * User — maps one row in the `users` table (a single User record).
  */
 class User extends BaseModel{
 	
-	// Define neccessary constansts so we know from which table to load data
+	// Table and class name used by BaseModel find / persistence helpers
 	const tableName = 'users';
-	// ClassName constant is important for find and findOne static functions to work
 	const className = 'User';
 	
-	// Create getter functions
+	// User field accessors
 	
 	public function getName() {
 		return $this->getField('name');
@@ -29,14 +28,14 @@ class User extends BaseModel{
 	}
 
 	/**
-	 * Validate current user attributes.
+	 * Validate this User's attributes before create or update.
 	 * Returns errors keyed by attribute name.
 	 */
 	public function validate() {
 		$name = isset($this->fields['name']) ? $this->fields['name'] : '';
 		$email = isset($this->fields['email']) ? $this->fields['email'] : '';
 		$city = isset($this->fields['city']) ? $this->fields['city'] : '';
-		$phone = isset($this->fields['phone']) ? trim($this->fields['phone']) : '';
+		$phone = isset($this->fields['phone']) ? $this->fields['phone'] : '';
 
 		$errors = array();
 
@@ -67,15 +66,10 @@ class User extends BaseModel{
 
 		if ($phone === '') {
 			$errors['phone'] = 'Phone number is required.';
-		} elseif (mb_strlen($phone) > 20) {
-			$errors['phone'] = 'Phone number must be 20 characters or fewer.';
 		} else {
-			$digits = preg_replace('/\D/', '', $phone);
-			$digitLen = strlen($digits);
-			if ($digitLen < 10 || $digitLen > 15) {
-				$errors['phone'] = 'Enter a valid phone number (10–15 digits, optional + prefix).';
-			} else {
-				$this->setField('phone', $phone);
+			$digitCount = strlen(preg_replace('/\D/', '', $phone));
+			if (mb_strlen($phone) > 20 || $digitCount < 8 || $digitCount > 15) {
+				$errors['phone'] = 'Phone must be at most 20 characters and include 8 to 15 digits.';
 			}
 		}
 

@@ -1,6 +1,6 @@
 <?php
 
-$app = require "./core/app.php";
+$app = require __DIR__.'/../core/app.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 	header('Allow: POST');
@@ -18,7 +18,6 @@ $attributes = array(
 );
 
 $result = User::create($app->db, $attributes);
-$user = $result['model'];
 $errors = $result['errors'];
 
 if (!empty($errors)) {
@@ -29,17 +28,10 @@ if (!empty($errors)) {
 	), 422);
 }
 
-$totalUsers = count(User::find($app->db, '*'));
+$created = $result['model'];
 
-$app->renderJson(array(
-	'status' => 'ok',
-	'message' => 'User created successfully.',
-	'user' => array(
-		'id' => $user->getId(),
-		'name' => $user->getName(),
-		'email' => $user->getEmail(),
-		'city' => $user->getCity(),
-		'phone' => $user->getPhone()
-	),
-	'totalUsers' => $totalUsers
-), 201);
+flash_set('User "'.$created->getName().'" was created successfully.');
+
+http_response_code(201);
+header('Location: /');
+exit;

@@ -1,5 +1,7 @@
 <?php
 
+require dirname(__FILE__).'/flash.php';
+
 // Load BaseModel and all models from models directory
 require dirname(__FILE__).'/base_model.php';
 foreach (glob(dirname(__FILE__).'/../models/*.php') as $filename){
@@ -26,15 +28,28 @@ class App {
 		// Load database instance and tell it to connect with given config
 		$this->db = require $this->directory.'/database.php';
 		$this->db->connect($this->config->database);
+
+		if (session_status() === PHP_SESSION_NONE) {
+			session_start();
+		}
 	}	
 	
 	/**
 	 * Renders given view with given set of variables
-	 * 
-	 * param $viewfile: path of the view file relative to the views direcotry, without the ending .php
-	 * param $vars: array of variables to be accessed insede the views
+	 *
+	 * @param string $viewfile path of the view file relative to the views directory, without the ending .php
+	 * @param array  $vars     variables for the view; optional `flashMessages` list is merged after session
+	 *                         flash from flash_take_all() (each item is a string or legacy `message` array)
 	 */
 	public function renderView($viewfile, $vars = array()) {
+		$sessionFlash = flash_take_all();
+		$extraFlash = array();
+		if (isset($vars['flashMessages']) && is_array($vars['flashMessages'])) {
+			$extraFlash = $vars['flashMessages'];
+			unset($vars['flashMessages']);
+		}
+		$vars['flashMessages'] = array_merge($sessionFlash, $extraFlash);
+
 		// Render array to usable variables
 		foreach ($vars as $key => $value) {
 			$$key = $value;
@@ -42,13 +57,13 @@ class App {
 		
 		// Start capturing of output
 		ob_start();
-		include './views/'.$viewfile.'.php';
+		include $this->directory.'/../views/'.$viewfile.'.php';
 		// Assign output to $content which will be rendered in layout
 		$content = ob_get_contents();
 		// Stop output capturing
 		ob_end_clean();
 		// Render $content in layout
-		include './views/layout.php';
+		include $this->directory.'/../views/layouts/layout.php';
 	}
 
 	/**

@@ -11,6 +11,7 @@ We ask you to build a very simple one-page application consisting of a single ta
 2. Create a new MySQL database
 3. Rename `config/database` to `config/database.php` and configure your database connection settings in this file
 4. Import `database/schema.sql` into your database
+5. After changing markup classes in `views/` or `js/`, rebuild CSS: `npm install` then `npm run build:css` (Tailwind scans those paths via `css/app.css`).
 
 ### What we’re looking for
 We want to see how you approach building software that real users would enjoy using. Treat this as if it were a real-world product for adding users to a table. 

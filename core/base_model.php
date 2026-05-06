@@ -158,7 +158,23 @@ class BaseModel {
 	}
 	
 	/**
-	 * Finds records using given criteria
+	 * Count rows matching optional WHERE conditions.
+	 *
+	 * Uses the same `$conditions` structure as `find()` / `findFirst()`.
+	 * param $conditions: array of WHERE conditions
+	 */
+	public static function countWhere($db, $conditions = array()){
+		$where = self::buildWhere($conditions);
+		$query = 'SELECT COUNT(*) AS `cnt` FROM `'.static::tableName.'` WHERE '.$where;
+		$res = $db->query($query);
+		if (isset($res[0]['cnt'])) {
+			return (int)$res[0]['cnt'];
+		}
+		return 0;
+	}
+
+	/**
+	 * Finds records using given criteria.
 	 * param $fields: Eager load given fields
 	 * param $conditions: array of WHERE conditions
 	 * param $order: array of ORDER BY criteria
